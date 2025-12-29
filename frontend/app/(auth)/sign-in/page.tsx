@@ -3,6 +3,7 @@ import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 const SignIn = () => {
 	const {
@@ -16,12 +17,25 @@ const SignIn = () => {
 		},
 		mode: "onBlur",
 	});
+
+	const router = useRouter();
+
 	const onSubmit = async (data: SignInFormData) => {
-		try {
-			console.log(data);
-		} catch (e) {
-			console.error(e);
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify(data),
+			},
+		);
+
+		if (!res.ok) {
+			const body = await res.json().catch(() => null);
+			throw new Error(body?.error ?? "Login failed");
 		}
+		if (res.ok) router.replace("/");
 	};
 	return (
 		<>

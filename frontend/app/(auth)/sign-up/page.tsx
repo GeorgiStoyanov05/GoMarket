@@ -6,6 +6,7 @@ import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
 import { PREFERRED_INDUSTRIES } from "@/lib/constants";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
 	const {
@@ -23,19 +24,26 @@ const SignUp = () => {
 		},
 		mode: "onBlur",
 	});
+
+	const router = useRouter();
+
 	const onSubmit = async (data: SignUpFormData) => {
-		try {
-			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+		const res = await fetch(
+			`${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
 				body: JSON.stringify(data),
-			});
-		} catch (e) {
-			console.error(e);
-		}
-	};
+			},
+		);
 
+		if (!res.ok) {
+			const body = await res.json().catch(() => null);
+			throw new Error(body?.error ?? "Signup failed");
+		}
+		if (res.ok) router.replace("/");
+	};
 	return (
 		<>
 			<h1 className="form-title">Sign Up & Personalize</h1>

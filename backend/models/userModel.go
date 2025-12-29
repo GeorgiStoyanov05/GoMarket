@@ -2,21 +2,41 @@ package models
 
 import (
 	"time"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type User struct {
-	ID                 primitive.ObjectID `bson: "_id"`
-	FullName           *string            `json: "full_name" validate:"required, min=2, max=100"`
-	Password           *string            `json: "password" validate: "required, min=6"`
-	Email              *string            `json: "email" validate:"email required"`
-	Country            *string            `json: "country" validate:"required"`
-	Preffered_industry *string            `json: "preferred_industry" validate:"required"`
-	Token              *string            `json:"token"`
-	User_type          *string            `json: "user_type" validate:"required, eq=ADMIN|eq=USER"`
-	Refresh_token      *string            `json: "refresh_token"`
-	Created_at         time.Time          `json: "created_at"`
-	Updated_at         time.Time          `json: "updated_at"`
-	User_id            *string            `json: "user_id"`
+	ID                primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	FullName          string             `bson:"fullName" json:"fullName"`
+	Email             string             `bson:"email" json:"email"`
+	PasswordHash      string             `bson:"passwordHash" json:"-"`
+	Country           string             `bson:"country" json:"country"`
+	PreferredIndustry string             `bson:"preferredIndustry" json:"preferredIndustry"`
+	UserType          string             `bson:"userType" json:"userType"`
+	CreatedAt         time.Time          `bson:"createdAt" json:"createdAt"`
+	UpdatedAt         time.Time          `bson:"updatedAt" json:"updatedAt"`
+}
+
+type UserPublic struct {
+	ID                string    `json:"id"`
+	FullName          string    `json:"fullName"`
+	Email             string    `json:"email"`
+	Country           string    `json:"country"`
+	PreferredIndustry string    `json:"preferredIndustry"`
+	UserType          string    `json:"userType"`
+	CreatedAt         time.Time `json:"createdAt"`
+	UpdatedAt         time.Time `json:"updatedAt"`
+}
+
+func ToUserPublic(u User) UserPublic {
+	return UserPublic{
+		ID:                u.ID.Hex(),
+		FullName:          u.FullName,
+		Email:             u.Email,
+		Country:           u.Country,
+		PreferredIndustry: u.PreferredIndustry,
+		UserType:          u.UserType,
+		CreatedAt:         u.CreatedAt,
+		UpdatedAt:         u.UpdatedAt,
+	}
 }

@@ -18,7 +18,12 @@ const UserDropdown = () => {
 	const router = useRouter();
 
 	const handleSignOut = async () => {
-		router.push("/sign-in");
+		await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+			method: "POST",
+			credentials: "include",
+		});
+
+		router.replace("/sign-in");
 	};
 
 	const user = { name: "John", email: "nz@abv.bg" };
