@@ -1,29 +1,22 @@
 "use client";
-import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
-import InputField from "@/components/forms/inputField";
-import SelectField from "@/components/forms/SelectField";
+import InputField from "@/components/forms/InputField";
 import { Button } from "@/components/ui/button";
-import { PREFERRED_INDUSTRIES } from "@/lib/constants";
 import { useForm } from "react-hook-form";
 
 const SignIn = () => {
 	const {
 		register,
 		handleSubmit,
-		control,
 		formState: { errors, isSubmitting },
-	} = useForm<SignUpFormData>({
+	} = useForm<SignInFormData>({
 		defaultValues: {
-			fullName: "",
 			email: "",
 			password: "",
-			country: "BG",
-			preferredIndustry: "Technology",
 		},
 		mode: "onBlur",
 	});
-	const onSubmit = async (data: SignUpFormData) => {
+	const onSubmit = async (data: SignInFormData) => {
 		try {
 			console.log(data);
 		} catch (e) {

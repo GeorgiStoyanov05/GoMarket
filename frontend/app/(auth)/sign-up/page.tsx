@@ -1,7 +1,7 @@
 "use client";
 import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
-import InputField from "@/components/forms/inputField";
+import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
 import { PREFERRED_INDUSTRIES } from "@/lib/constants";
@@ -25,7 +25,12 @@ const SignUp = () => {
 	});
 	const onSubmit = async (data: SignUpFormData) => {
 		try {
-			console.log(data);
+			await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify(data),
+			});
 		} catch (e) {
 			console.error(e);
 		}
@@ -36,7 +41,7 @@ const SignUp = () => {
 			<h1 className="form-title">Sign Up & Personalize</h1>
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 				<InputField
-					name="fullname"
+					name="fullName"
 					label="Full Name"
 					placeholder="John Doe"
 					register={register}
