@@ -29,7 +29,7 @@ func UserSignUp(c *gin.Context) {
 		return
 	}
 
-	token, err := helpers.CreateAccessToken(user.ID.Hex(), user.Email, user.UserType, 15*time.Minute)
+	token, err := helpers.CreateAccessToken(user.ID.Hex(), user.Email, user.UserType, 15*time.Hour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create token"})
 		return
@@ -37,7 +37,7 @@ func UserSignUp(c *gin.Context) {
 
 	// HttpOnly cookie (recommended)
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("access_token", token, 60*15, "/", "", false, true)
+	c.SetCookie("access_token", token, 60*60*15, "/", "", false, true)
 
 	c.JSON(http.StatusCreated, gin.H{"user": models.ToUserPublic(user)})
 }
