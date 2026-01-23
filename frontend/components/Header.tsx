@@ -3,7 +3,8 @@ import Image from "next/image";
 import NavItems from "./NavItems";
 import UserDropdown from "./UserDropdown";
 import {searchStocks} from "@/lib/actions/finnhub.actions";
-const Header = async ({user}: {user: User}) => {
+
+const Header = async ({user}: {user: User | null}) => {
 	const initialStocks = await searchStocks();
 	return (
 		<header className="sticky top-0 header">
@@ -20,7 +21,15 @@ const Header = async ({user}: {user: User}) => {
 				<nav className="hidden sm:block">
 					<NavItems initialStocks={initialStocks}/>
 				</nav>
-				<UserDropdown user={user} initialStocks={initialStocks}/>
+				{user ? (
+					<UserDropdown user={user} initialStocks={initialStocks}/>
+				) : (
+					<Link href="/sign-in">
+						<button className="text-gray-400 hover:text-yellow-500">
+							Sign In
+						</button>
+					</Link>
+				)}
 			</div>
 		</header>
 	);
