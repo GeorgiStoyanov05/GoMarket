@@ -1,12 +1,13 @@
 package main
 
 import (
+	database "backend/database"
 	routes "backend/routes"
 	"os"
 	"time"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	database "backend/database"
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 	routes.AuthRoutes(router)
 	routes.UserRoutes(router)
 
-	database.DBInstance();
+	database.DBInstance()
 
-	router.Run(":"+port)
+	router.Run(":" + port)
 }
