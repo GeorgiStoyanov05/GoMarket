@@ -12,11 +12,6 @@ export const INVESTMENT_GOALS = [
 	{ value: "Conservative", label: "Conservative" },
 ];
 
-export const RISK_TOLERANCE_OPTIONS = [
-	{ value: "Low", label: "Low" },
-	{ value: "Medium", label: "Medium" },
-	{ value: "High", label: "High" },
-];
 
 export const PREFERRED_INDUSTRIES = [
 	{ value: "Technology", label: "Technology" },
