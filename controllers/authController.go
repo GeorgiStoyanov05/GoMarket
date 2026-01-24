@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 	"html/template"
-
+	models "github.com/GeorgiStoyanov05/GoMarket2/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +13,12 @@ tmpl.Execute(c.Writer, nil)
 }
 
 func PostRegisterPage(c *gin.Context){
+	var input models.RegisterModel
+	if err:=c.ShouldBind(&input); err!=nil{
+	 c.JSON(400, gin.H{"error": err.Error()})
+        return
+	}
+	fmt.Println(input.RememberMe)
 }
 
 func GetLoginPage(c *gin.Context){
