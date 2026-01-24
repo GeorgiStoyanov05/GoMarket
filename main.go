@@ -2,12 +2,12 @@ package main
 
 import (
 	database "github.com/GeorgiStoyanov05/GoMarket2/database"
-	//routes "github.com/GeorgiStoyanov05/GoMarket2/routes"
+	routes "github.com/GeorgiStoyanov05/GoMarket2/routes"
 	"os"
 	"time"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"html/template"
 )
 
 func main() {
@@ -27,9 +27,14 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	//routes.AuthRoutes(router)
-	//routes.UserRoutes(router)
-
+	routes.AuthRoutes(router)
+	routes.UserRoutes(router)
+	routes.HomeRoutes(router)
+	routes.StocksRoutes(router)
+	router.NoRoute(func(c *gin.Context){
+		tmpl:=template.Must(template.ParseFiles("views/index.html", "views/components/404.html"))
+		tmpl.Execute(c.Writer, nil)
+	})
 	database.DBInstance()
 
 	router.Run(":" + port)
