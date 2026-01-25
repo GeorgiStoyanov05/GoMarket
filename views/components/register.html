@@ -1,92 +1,84 @@
-{{define "component"}}
-
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Register</title>
-	</head>
-	<main class="flex-grow-1 d-flex align-items-center justify-content-center">
-		<div class="row justify-content-center w-100">
-			<div class="col-12 col-md-6 col-lg-4">
-				<h2 class="mb-3">Register</h2>
-				<form action="/register" method="post">
-					<div class="mb-3">
-						<label for="first_name" class="form-label"
-							>First Name</label
-						>
-						<input
-							type="text"
-							class="form-control"
-							id="first_name"
-							name="first_name"
-							placeholder="John"
-						/>
-					</div>
-					<div class="mb-3">
-						<label for="last_name" class="form-label"
-							>Last Name</label
-						>
-						<input
-							type="text"
-							class="form-control"
-							id="last_name"
-							name="last_name"
-							placeholder="Doe"
-						/>
-					</div>
-					<div class="mb-3">
-						<label for="email" class="form-label">Email</label>
-						<input
-							type="text"
-							class="form-control"
-							id="email"
-							placeholder="johndoe@domain.com"
-							name="email"
-						/>
-					</div>
-					<div class="mb-3">
-						<label for="password" class="form-label"
-							>Password</label
-						>
-						<input
-							type="text"
-							class="form-control"
-							id="password"
-							placeholder="Please enter your password..."
-							name="password"
-						/>
-					</div>
-					<div class="mb-3">
-						<label for="rePassword" class="form-label"
-							>Repeat Password</label
-						>
-						<input
-							type="text"
-							class="form-control"
-							id="rePassword"
-							placeholder="Please enter your password again..."
-							name="rePassword"
-						/>
-					</div>
-					<div class="mb-3 form-check">
-						<input
-							class="form-check-input"
-							type="checkbox"
-							id="rememberMe"
-							name="rememberMe"
-						/>
-						<label class="form-check-label" for="rememberMe">
-							Remember me
-						</label>
-					</div>
-					<button type="submit" class="btn btn-primary">
-						Register
-					</button>
-				</form>
-			</div>
+{{define "register"}}
+<div
+	class="flex-grow-1 d-flex align-items-center justify-content-center"
+	id="registerBox"
+>
+	<div class="row justify-content-center w-100">
+		<div class="col-12 col-md-6 col-lg-4">
+			<h2 class="mb-3">Register</h2>
+			<form
+				hx-post="/register"
+				hx-target="#registerBox"
+				hx-swap="outerHTML"
+			>
+				<div class="mb-3">
+					<label for="first_name" class="form-label"
+						>First Name</label
+					>
+					<input
+						type="text"
+						class="form-control"
+						id="first_name"
+						name="first_name"
+						placeholder="John"
+					/>
+				</div>
+				<div class="mb-3">
+					<label for="last_name" class="form-label">Last Name</label>
+					<input
+						type="text"
+						class="form-control"
+						id="last_name"
+						name="last_name"
+						placeholder="Doe"
+					/>
+				</div>
+				<div class="mb-3">
+					<label for="email" class="form-label">Email</label>
+					<input
+						type="text"
+						class="form-control"
+						id="email"
+						placeholder="johndoe@domain.com"
+						name="email"
+					/>
+				</div>
+				<div class="mb-3">
+					<label for="password" class="form-label">Password</label>
+					<input
+						type="password"
+						class="form-control"
+						id="password"
+						placeholder="Please enter your password..."
+						name="password"
+					/>
+				</div>
+				<div class="mb-3">
+					<label for="rePassword" class="form-label"
+						>Repeat Password</label
+					>
+					<input
+						type="password"
+						class="form-control"
+						id="rePassword"
+						placeholder="Please enter your password again..."
+						name="rePassword"
+					/>
+				</div>
+				<div class="mb-3 form-check">
+					<input
+						class="form-check-input"
+						type="checkbox"
+						id="rememberMe"
+						name="rememberMe"
+					/>
+					<label class="form-check-label" for="rememberMe">
+						Remember me
+					</label>
+				</div>
+				<button type="submit" class="btn btn-primary">Register</button>
+			</form>
 		</div>
-	</main>
-</html>
+	</div>
+</div>
 {{end}}

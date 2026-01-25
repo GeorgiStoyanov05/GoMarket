@@ -4,12 +4,13 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+	<script src="https://unpkg.com/htmx.org@1.9.12"></script>
 	<title>GoMarket</title>
 </head>
 <body class="min-vh-100 d-flex flex-column">
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
-  <a class="navbar-brand" href="/">GoMarket</a>
+  <a class="navbar-brand" href="/" hx-get="/" hx-target="#app" hx-swap="innerHTML" hx-push-url="true">GoMarket</a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
               data-bs-target="#navbarNav" aria-controls="navbarNav"
@@ -26,21 +27,21 @@
         <!-- CENTER (2 texts) -->
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="/search">Search</a>
+          <a class="nav-link" href="/search" hx-get="/search" hx-target="#app" hx-swap="innerHTML" hx-push-url="true">Search</a>
         </li>
           <li class="nav-item">
-            <a class="nav-link" href="/watchlist">Watchlist</a>
+            <a class="nav-link" href="/watchlist" hx-get="/watchlist" hx-target="#app" hx-swap="innerHTML" hx-push-url="true">Watchlist</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/portfolio">Portfolio</a>
+            <a class="nav-link" href="/portfolio" hx-get="/portfolio" hx-target="#app" hx-swap="innerHTML" hx-push-url="true">Portfolio</a>
           </li>
         </ul>
 
         <!-- RIGHT (everything else) -->
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-          <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+          <li class="nav-item"><a class="nav-link" href="/login" hx-get="/login" hx-target="#app" hx-swap="innerHTML" hx-push-url="true">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/register" hx-get="/register" hx-target="#app" hx-swap="innerHTML" hx-push-url="true">Register</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout" hx-get="/logout" hx-target="#app" hx-swap="innerHTML" hx-push-url="true">Logout</a></li>
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button"
@@ -57,10 +58,9 @@
       </div>
   </div>
 </nav>
+<main id="app" class="flex-grow-1 container py-4" hx-get="{{ .InitialPath }}" hx-trigger="load" hx-swap="innerHTML">
 
-{{block "component" .}}
-{{end}}
-
+</main>
 <footer class="mt-auto py-3 border-top text-center">
     <div class="container text-muted">
       © 2026 GoMarket

@@ -1,13 +1,14 @@
 package main
 
 import (
-	database "github.com/GeorgiStoyanov05/GoMarket2/database"
-	routes "github.com/GeorgiStoyanov05/GoMarket2/routes"
+	"html/template"
 	"os"
 	"time"
+
+	database "github.com/GeorgiStoyanov05/GoMarket2/database"
+	routes "github.com/GeorgiStoyanov05/GoMarket2/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"html/template"
 )
 
 func main() {
@@ -18,7 +19,9 @@ func main() {
 	}
 
 	router := gin.New()
-
+	tmpl := template.Must(template.ParseGlob("views/*.html"))
+	template.Must(tmpl.ParseGlob("views/components/*.html"))
+	router.SetHTMLTemplate(tmpl)
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
@@ -31,8 +34,8 @@ func main() {
 	routes.UserRoutes(router)
 	routes.HomeRoutes(router)
 	routes.StocksRoutes(router)
-	router.NoRoute(func(c *gin.Context){
-		tmpl:=template.Must(template.ParseFiles("views/index.html", "views/components/404.html"))
+	router.NoRoute(func(c *gin.Context) {
+		tmpl := template.Must(template.ParseFiles("views/index.html", "views/components/404.html"))
 		tmpl.Execute(c.Writer, nil)
 	})
 	database.DBInstance()
