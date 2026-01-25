@@ -35,8 +35,13 @@ func main() {
 	routes.HomeRoutes(router)
 	routes.StocksRoutes(router)
 	router.NoRoute(func(c *gin.Context) {
-		tmpl := template.Must(template.ParseFiles("views/index.html", "views/components/404.html"))
-		tmpl.Execute(c.Writer, nil)
+		if c.GetHeader("HX-Request") == "true" {
+			c.HTML(200, "404.html", gin.H{})
+			return
+		}
+		c.HTML(200, "index.html", gin.H{
+			"InitialPath": "/",
+		})
 	})
 	database.DBInstance()
 

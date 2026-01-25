@@ -1,40 +1,72 @@
-{{define "login"}}
-<div class="flex-grow-1 d-flex align-items-center justify-content-center">
-	<div class="row justify-content-center w-100">
-		<div class="col-12 col-md-6 col-lg-4">
-			<h2 class="mb-3">Login</h2>
-			<form action="/login" method="post">
-				<div class="mb-3">
-					<label for="email" class="form-label">Email</label>
-					<input
-						type="text"
-						class="form-control"
-						id="email"
-						placeholder="johndoe@domain.com"
-					/>
-				</div>
-				<div class="mb-3">
-					<label for="password" class="form-label">Password</label>
-					<input
-						type="text"
-						class="form-control"
-						id="password"
-						placeholder="Please enter your password..."
-					/>
-				</div>
-				<div class="mb-3 form-check">
-					<input
-						class="form-check-input"
-						type="checkbox"
-						id="rememberMe"
-					/>
-					<label class="form-check-label" for="rememberMe">
-						Remember me
-					</label>
-				</div>
-				<button type="submit" class="btn btn-primary">Log in</button>
-			</form>
-		</div>
-	</div>
+{{ define "login" }}
+<div class="flex-grow-1 d-flex align-items-center justify-content-center" id="loginBox">
+  <div class="row justify-content-center w-100">
+    <div class="col-12 col-md-6 col-lg-4">
+
+      <h2 class="mb-3">Login</h2>
+
+      {{ with index .errors "_form" }}
+        <div class="alert alert-danger">{{ . }}</div>
+      {{ end }}
+
+      <form
+        method="POST"
+        hx-post="/login"
+        hx-target="#loginBox"
+        hx-swap="outerHTML"
+        novalidate
+      >
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="text"
+            class="form-control {{ if index .errors "email" }}is-invalid{{ end }}"
+            id="email"
+            name="email"
+            placeholder="johndoe@domain.com"
+            value="{{ .values.Email }}"
+          >
+          {{ with index .errors "email" }}
+            <div class="invalid-feedback">{{ . }}</div>
+          {{ end }}
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control {{ if index .errors "password" }}is-invalid{{ end }}"
+            id="password"
+            name="password"
+            placeholder="Please enter your password..."
+          >
+          {{ with index .errors "password" }}
+            <div class="invalid-feedback">{{ . }}</div>
+          {{ end }}
+        </div>
+        <!-- Remember Me -->
+        <div class="mb-3 form-check">
+          <input
+            class="form-check-input {{ if index .errors "rememberMe" }}is-invalid{{ end }}"
+            type="checkbox"
+            id="rememberMe"
+            name="rememberMe"
+            value="on"
+            {{ if .values.RememberMe }}checked{{ end }}
+          >
+          <label class="form-check-label" for="rememberMe">Remember me</label>
+
+          {{ with index .errors "rememberMe" }}
+            <div class="invalid-feedback d-block">{{ . }}</div>
+          {{ end }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+      </form>
+
+    </div>
+  </div>
 </div>
-{{end}}
+{{ end }}

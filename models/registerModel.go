@@ -5,5 +5,5 @@ type RegisterModel struct {
 	Email             string	`form:"email" binding:"required,email"`
 	Password          string	`form:"password" binding:"required,min=8"`
 	RepeatPass		  string	`form:"rePassword" binding:"required"`
-	RememberMe		  string	`form:"rememberMe" binding:"required"`
+	RememberMe		  bool		`form:"rememberMe" binding:"required"`
 }
