@@ -103,5 +103,10 @@ func CreateAndSignJWT(user *models.User, ttl int64) (string,error){
 
 func SetCookie(c *gin.Context, token string, ttl int64){
 	c.SetSameSite(http.SameSiteLaxMode)
-	c.SetCookie("Auth", token, int(ttl), "", "", false, true)
+	c.SetCookie("Auth", token, int(ttl), "/", "", false, true)
+}
+
+func ClearAuthCookie(c *gin.Context) {
+	c.SetSameSite(http.SameSiteLaxMode)
+	c.SetCookie("Auth", "", -1, "/", "", false, true)
 }

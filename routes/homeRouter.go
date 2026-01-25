@@ -1,26 +1,27 @@
 package routes
 
 import (
+	"github.com/GeorgiStoyanov05/GoMarket2/middlewares"
 	"github.com/gin-gonic/gin"
 )
 
 func HomeRoutes(r *gin.Engine) {
 	r.GET("/", func(c *gin.Context) {
 		if c.GetHeader("HX-Request") == "true" {
-			c.HTML(200, "home.html", gin.H{})
+			c.HTML(200, "home", middlewares.WithAuth(c, gin.H{}))
 			return
 		}
-		c.HTML(200, "index.html", gin.H{
+		c.HTML(200, "index.html", middlewares.WithAuth(c, gin.H{
 			"InitialPath": "/",
-		})
+		}))
 	})
 	r.GET("/search", func(c *gin.Context) {
 		if c.GetHeader("HX-Request") == "true" {
-			c.HTML(200, "search", gin.H{})
+			c.HTML(200, "search", middlewares.WithAuth(c, gin.H{}))
 			return
 		}
-		c.HTML(200, "index.html", gin.H{
+		c.HTML(200, "index.html",middlewares.WithAuth(c, gin.H{
 			"InitialPath": "/search",
-		})
+		}))
 	})
 }

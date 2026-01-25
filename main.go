@@ -7,6 +7,7 @@ import (
 
 	database "github.com/GeorgiStoyanov05/GoMarket2/database"
 	routes "github.com/GeorgiStoyanov05/GoMarket2/routes"
+	middlewares "github.com/GeorgiStoyanov05/GoMarket2/middlewares"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -29,7 +30,7 @@ func main() {
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
 	}))
-
+	router.Use(middlewares.CheckIfLoggedIn())
 	routes.AuthRoutes(router)
 	routes.UserRoutes(router)
 	routes.HomeRoutes(router)

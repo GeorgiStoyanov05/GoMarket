@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"regexp"
 	"time"
 	"strings"
 	models "github.com/GeorgiStoyanov05/GoMarket2/models"
+	"github.com/GeorgiStoyanov05/GoMarket2/middlewares"
 	"github.com/GeorgiStoyanov05/GoMarket2/services"
 	"github.com/gin-gonic/gin"
 )
@@ -20,15 +20,15 @@ func isValidEmailRegex(s string) bool {
 
 func GetRegisterPage(c *gin.Context) {
 	if c.GetHeader("HX-Request") == "true" {
-		c.HTML(200, "register", gin.H{
+		c.HTML(200, "register", middlewares.WithAuth(c, gin.H{
 			"values": models.RegisterModel{},
 			"errors": map[string]string{},
-		})
+		}))
 		return
 	}
-	c.HTML(200, "index.html", gin.H{
+	c.HTML(200, "index.html", middlewares.WithAuth(c, gin.H{
 		"InitialPath": "/register",
-	})
+	}))
 }
 
 func PostRegisterPage(c *gin.Context) {
@@ -67,20 +67,20 @@ func PostRegisterPage(c *gin.Context) {
 	}
 
 	if len(errs) > 0 {
-		c.HTML(http.StatusOK, "register", gin.H{
+		c.HTML(http.StatusOK, "register", middlewares.WithAuth(c, gin.H{
 			"values": user,
 			"errors": errs,
-		})
+		}))
 		return
 	}
 
 	u, newErrs := services.RegisterUser(&user)
 
 	if len(newErrs) > 0 {
-		c.HTML(http.StatusOK, "register", gin.H{
+		c.HTML(http.StatusOK, "register", middlewares.WithAuth(c, gin.H{
 			"values": user,
 			"errors": newErrs,
-		})
+		}))
 		return
 	}
 
@@ -94,10 +94,10 @@ func PostRegisterPage(c *gin.Context) {
 
 	tokenStr, err:=services.CreateAndSignJWT(&u, ttl)
 	if err!=nil{
-		c.HTML(http.StatusOK, "login", gin.H{
+		c.HTML(http.StatusOK, "login", middlewares.WithAuth(c, gin.H{
 			"values": user,
 			"errors": map[string]string{"_form": err.Error()},
-		})
+		}))
 		return
 	}
 
@@ -109,15 +109,15 @@ func PostRegisterPage(c *gin.Context) {
 
 func GetLoginPage(c *gin.Context) {
 	if c.GetHeader("HX-Request") == "true" {
-		c.HTML(200, "login", gin.H{
+		c.HTML(200, "login", middlewares.WithAuth(c, gin.H{
 			"values": models.RegisterModel{},
 			"errors": map[string]string{},
-		})
+		}))
 		return
 	}
-	c.HTML(200, "index.html", gin.H{
+	c.HTML(200, "index.html", middlewares.WithAuth(c, gin.H{
 		"InitialPath": "/login",
-	})
+	}))
 }
 
 func PostLoginPage(c *gin.Context) {
@@ -144,19 +144,19 @@ func PostLoginPage(c *gin.Context) {
 	}
 
 	if len(errs) > 0 {
-		c.HTML(http.StatusOK, "login", gin.H{
+		c.HTML(http.StatusOK, "login", middlewares.WithAuth(c, gin.H{
 			"values": user,
 			"errors": errs,
-		})
+		}))
 		return
 	}
 
 	u,authErrs:=services.LoginUser(&user)
 	if(len(authErrs)>0){
-		c.HTML(http.StatusOK, "login", gin.H{
+		c.HTML(http.StatusOK, "login", middlewares.WithAuth(c, gin.H{
 			"values": user,
 			"errors": authErrs,
-		})
+		}))
 		return
 	}
 
@@ -169,10 +169,10 @@ func PostLoginPage(c *gin.Context) {
 
 	tokenStr, err:=services.CreateAndSignJWT(&u, ttl)
 	if err!=nil{
-		c.HTML(http.StatusOK, "login", gin.H{
+		c.HTML(http.StatusOK, "login", middlewares.WithAuth(c, gin.H{
 			"values": user,
 			"errors": map[string]string{"_form": err.Error()},
-		})
+		}))
 		return
 	}
 
@@ -183,5 +183,13 @@ func PostLoginPage(c *gin.Context) {
 }
 
 func UserLogout(c *gin.Context) {
-	fmt.Println("Logout")
+	services.ClearAuthCookie(c)
+
+	if c.GetHeader("HX-Request") == "true" {
+		c.Header("HX-Redirect", "/")
+		c.Status(204)
+		return
+	}
+
+	c.Redirect(204, "/")
 }
