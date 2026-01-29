@@ -87,11 +87,28 @@
 							</a>
 							<ul class="dropdown-menu dropdown-menu-end">
 								<li>
-									<a class="dropdown-item" href="#">Action</a>
+									<a
+										class="dropdown-item"
+										href="/funds"
+										hx-get="/funds"
+										hx-target="#fundsModal"
+										hx-swap="innerHTML"
+										hx-push-url="true"
+										>Deposit Funds</a
+									>
 								</li>
 								<li>
-									<a class="dropdown-item">Another action</a>
+									<a
+										class="dropdown-item"
+										href="/settings"
+										hx-get="/settings"
+										hx-target="#app"
+										hx-swap="innerHTML"
+										hx-push-url="true"
+										>Settings</a
+									>
 								</li>
+
 								<li>
 									<a
 										class="dropdown-item"
@@ -103,19 +120,6 @@
 										>Logout</a
 									>
 								</li>
-								{{if eq .user.Role "Admin"}}
-								<li>
-									<a
-										class="dropdown-item"
-										href="/logout"
-										hx-get="/logout"
-										hx-target="#app"
-										hx-swap="innerHTML"
-										hx-push-url="true"
-										>Admin bace</a
-									>
-								</li>
-								{{end}}
 							</ul>
 						</li>
 					</ul>
@@ -150,11 +154,26 @@
 		</nav>
 		<main
 			id="app"
-			class="flex-grow-1 container py-4"
+			class="flex-grow-1 d-flex p-0"
 			hx-get="{{ .InitialPath }}"
 			hx-trigger="load"
 			hx-swap="innerHTML"
 		></main>
+		<div
+			class="modal fade"
+			id="staticBackdrop"
+			data-bs-backdrop="static"
+			data-bs-keyboard="false"
+			tabindex="-1"
+			aria-labelledby="staticBackdropLabel"
+			aria-hidden="true"
+		>
+			<!-- HTMX will swap the dialog/content in here -->
+			<div
+				id="fundsModalContent"
+				hx-on::after-swap="bootstrap.Modal.getOrCreateInstance(document.getElementById('staticBackdrop')).show()"
+			></div>
+		</div>
 		<footer class="mt-auto py-3 border-top text-center">
 			<div class="container text-muted">© 2026 GoMarket</div>
 		</footer>

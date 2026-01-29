@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	//"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -109,4 +110,81 @@ func SetCookie(c *gin.Context, token string, ttl int64){
 func ClearAuthCookie(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("Auth", "", -1, "/", "", false, true)
+}
+
+func ChangeUserEmail(oldEmail string, newEmail string) (models.User, map[string]string){
+	errs := map[string]string{}
+    coll := db.Client.Database("gomarket").Collection("users")
+
+    err := coll.FindOne(nil, bson.M{"email": newEmail}).Err()
+	if err == nil {
+		errs["email"] = "Email has already been taken!"
+		return models.User{}, errs
+	}
+
+    _, err=coll.UpdateOne(nil, bson.M{"email": oldEmail}, bson.M{"$set":bson.M{"email": newEmail}})
+    if err!=nil{
+    	errs["_form"] = "There was a problem updating the email!"
+     	return models.User{}, errs
+    }
+
+    var user models.User
+        if err := coll.FindOne(nil, bson.M{"email": newEmail}).Decode(&user); err != nil {
+            errs["_form"] = "Updated, but failed to load user."
+            return models.User{}, errs
+        }
+    return user, nil
+}
+
+func ChangeUserPassword(id, password string) (models.User, map[string]string){
+	errs := map[string]string{}
+    coll := db.Client.Database("gomarket").Collection("users")
+    var user models.User
+
+    uid, err :=primitive.ObjectIDFromHex(id)
+    if err!=nil{
+    	errs["_form"] = "Error getting user Id!"
+		return models.User{}, errs
+    }
+    err = coll.FindOne(nil, bson.M{"_id": uid}).Decode(&user)
+	if err != nil {
+		errs["_form"] = "Error getting the User!"
+		return models.User{}, errs
+	}
+	if bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)) == nil {
+        errs["_form"] = "You've entered an old password!"
+        return models.User{}, errs
+    }
+
+    hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+    if err != nil {
+       errs["_form"] = "Could not hash the new password."
+       return models.User{}, errs
+     }
+
+    _, err=coll.UpdateOne(nil, bson.M{"_id": uid}, bson.M{"$set":bson.M{"password_hash": string(hash)}})
+    if err!=nil{
+    	errs["_form"] = "There was a problem updating the password!"
+     	return models.User{}, errs
+    }
+    user.PasswordHash = string(hash)
+    return user, nil
+}
+
+func ChangeUserBalance(id primitive.ObjectID, change float64) (models.User, map[string]string){
+	errs := map[string]string{}
+    coll := db.Client.Database("gomarket").Collection("users")
+
+    _, err:=coll.UpdateOne(nil, bson.M{"_id": id}, bson.M{"$inc":bson.M{"balance": change}})
+    if err!=nil{
+    	errs["_form"] = "There was a problem updating the amount"
+     	return models.User{}, errs
+    }
+
+    var user models.User
+        if err := coll.FindOne(nil, bson.M{"_id": id}).Decode(&user); err != nil {
+            errs["_form"] = "Updated, but failed to load user."
+            return models.User{}, errs
+        }
+    return user, nil
 }

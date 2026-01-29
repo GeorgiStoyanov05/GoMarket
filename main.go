@@ -22,6 +22,7 @@ func main() {
 	router := gin.New()
 	tmpl := template.Must(template.ParseGlob("views/*.html"))
 	template.Must(tmpl.ParseGlob("views/components/*.html"))
+	template.Must(tmpl.ParseGlob("views/components/partials/*.html"))
 	router.SetHTMLTemplate(tmpl)
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:3000"},

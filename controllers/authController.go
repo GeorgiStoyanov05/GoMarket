@@ -62,7 +62,7 @@ func PostRegisterPage(c *gin.Context) {
 	if len(user.RepeatPass) < 6 {
 		errs["rePassword"] = "Password should be at least 6 characters long!"
 	}
-	if user.Password != "" && user.RepeatPass != "" && user.Password != user.RepeatPass {
+	if user.Password != user.RepeatPass {
 		errs["rePassword"] = "Passwords do not match."
 	}
 

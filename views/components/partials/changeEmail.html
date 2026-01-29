@@ -1,0 +1,46 @@
+{{define "changeEmail"}}
+<div class="flex-grow-1 d-flex align-items-center justify-content-center pt-4" id="emailBox">
+  <div class="row justify-content-center w-100">
+    <div class="col-12 col-md-6 col-lg-4">
+
+      <h2 class="mb-3">Change Email</h2>
+
+      {{ with index .errors "_form" }}
+        <div class="alert alert-danger">{{ . }}</div>
+      {{ end }}
+
+      {{ if .succ }}
+        <div class="alert alert-success" role="alert">
+          {{ .succ }}
+        </div>
+      {{ end }}
+
+      <form
+        method="POST"
+        hx-post="/settings/email"
+        hx-target="#emailBox"
+        hx-swap="outerHTML"
+        novalidate
+      >
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">New Email</label>
+          <input
+            type="text"
+            class="form-control {{ if index .errors "email" }}is-invalid{{ end }}"
+            id="email"
+            name="email"
+            placeholder="Please enter your new email"
+            value="{{ .email }}"
+          >
+          {{ with index .errors "email" }}
+            <div class="invalid-feedback">{{ . }}</div>
+          {{ end }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Change Email</button>
+      </form>
+
+    </div>
+  </div>
+</div>
+{{end}}

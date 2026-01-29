@@ -15,13 +15,4 @@ func HomeRoutes(r *gin.Engine) {
 			"InitialPath": "/",
 		}))
 	})
-	r.GET("/search", func(c *gin.Context) {
-		if c.GetHeader("HX-Request") == "true" {
-			c.HTML(200, "search", middlewares.WithAuth(c, gin.H{}))
-			return
-		}
-		c.HTML(200, "index.html",middlewares.WithAuth(c, gin.H{
-			"InitialPath": "/search",
-		}))
-	})
 }
