@@ -2,8 +2,6 @@
 
 GoMarket is a Go web application structured in an MVC-ish style (controllers / routes / services / models) with server-rendered views and static assets.
 
-> **Status:** in active development
-
 ---
 
 ## Table of Contents
