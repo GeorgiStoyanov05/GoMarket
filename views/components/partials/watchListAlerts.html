@@ -1,0 +1,63 @@
+{{ define "watchlistAlerts" }} {{ if not .Groups }}
+<div class="text-muted">
+	No alerts yet. Create one from any symbol details page.
+</div>
+{{ else }}
+<div class="d-flex flex-column gap-3">
+	{{ range .Groups }}
+	<div class="card bg-dark border-secondary">
+		<div
+			class="card-header d-flex justify-content-between align-items-center"
+		>
+			<div class="fw-semibold">{{ .Symbol }}</div>
+
+			<a
+				class="btn btn-sm btn-outline-light"
+				href="/details/{{ .Symbol }}"
+				hx-get="/details/{{ .Symbol }}"
+				hx-target="#app"
+				hx-swap="innerHTML"
+				hx-push-url="true"
+			>
+				Open
+			</a>
+		</div>
+
+		<div class="card-body py-2">
+			<ul class="list-group list-group-flush">
+				{{ range .Alerts }}
+				<li
+					class="list-group-item bg-transparent text-light px-0 d-flex justify-content-between align-items-start"
+				>
+					<div>
+						<div class="fw-semibold">
+							{{ if eq .Condition "above" }}Above{{ else }}Below{{
+							end }} {{ printf "%.2f" .TargetPrice }}
+						</div>
+
+						{{ if .Triggered }}
+						<div class="small text-warning">
+							Triggered at {{ printf "%.2f" .TriggeredPrice }}
+						</div>
+						{{ else if .Active }}
+						<div class="small text-muted">Active</div>
+						{{ else }}
+						<div class="small text-muted">Inactive</div>
+						{{ end }}
+					</div>
+
+					<button
+						class="btn btn-outline-danger btn-sm"
+						hx-post="/alerts/by-id/{{ .ID.Hex }}/delete"
+						hx-swap="none"
+					>
+						Delete
+					</button>
+				</li>
+				{{ end }}
+			</ul>
+		</div>
+	</div>
+	{{ end }}
+</div>
+{{ end }} {{ end }}

@@ -4,7 +4,8 @@ import (
 	"html/template"
 	"os"
 	"time"
-
+	"context"
+	"github.com/GeorgiStoyanov05/GoMarket2/services"
 	database "github.com/GeorgiStoyanov05/GoMarket2/database"
 	middlewares "github.com/GeorgiStoyanov05/GoMarket2/middlewares"
 	routes "github.com/GeorgiStoyanov05/GoMarket2/routes"
@@ -37,6 +38,7 @@ func main() {
 	routes.UserRoutes(router)
 	routes.HomeRoutes(router)
 	routes.StocksRoutes(router)
+	routes.AlertsRoutes(router)
 	router.NoRoute(func(c *gin.Context) {
 		if c.GetHeader("HX-Request") == "true" {
 			c.HTML(200, "404.html", gin.H{})
@@ -47,6 +49,6 @@ func main() {
 		})
 	})
 	database.DBInstance()
-
+	services.StartPriceAlertMonitor(context.Background())
 	router.Run(":" + port)
 }

@@ -16,7 +16,7 @@ type User struct{
 
 	Balance float64 `bson:"balance" json:"balance"`
 
-	Watchlist []Watchlist    `bson:"watchlist" json:"watchlist"`
+	Watchlist []PriceAlert    `bson:"watchlist" json:"watchlist"`
 	Portfolio []BoughtStock  `bson:"portfolio" json:"portfolio"`
 
 	CreatedAt time.Time `bson:"created_at" json:"created_at"`
