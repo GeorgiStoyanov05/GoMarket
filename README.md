@@ -2,6 +2,16 @@
 
 GoMarket is a Go web application structured in an MVC-ish style (controllers / routes / services / models) with server-rendered views and static assets.
 
+The backend is built with Gin (gin-gonic) and follows a clean layered architecture (routes → controllers → services → models) to keep business logic separated, testable, and easy to extend. Data is persisted in MongoDB, and Gorilla WebSocket is used to support real-time updates for a more interactive user experience.
+
+From a user perspective, GoMarket is designed around typical finance-app flows: users can create an account, log in, navigate through the app’s market-focused pages, manage their account state, and interact with features that update dynamically. The UI is server-rendered with templates, backed by static assets (CSS/JS), and enhanced with real-time communication where needed.
+
+What users can do:
+- Register and log in to a personal account
+- Navigate market-style pages (browse/view data-driven screens)
+- Manage account actions (e.g., add/deposit funds / update balance-related flows)
+- Receive live updates through WebSockets (real-time UI behavior)
+- Use a responsive server-rendered UI with dynamic partial updates (where implemented)
 ---
 
 ## Table of Contents
@@ -54,11 +64,11 @@ GoMarket is a Go web application structured in an MVC-ish style (controllers / r
 ---
 
 ## Tech Stack
-- **Backend:** Go
-- **Frontend:** HTML + CSS + JS (server-rendered templates + static assets)
-- **Architecture:** controllers / services / routes separation
-- **Database:** configured via `database/` (check your implementation for the engine)
-
+- **Backend:** Go (Golang), Gin (gin-gonic)
+- **Database:** MongoDB
+- **Real-time:** Gorilla WebSocket (gorilla/websocket)
+- **Frontend:** Server-rendered HTML templates + HTMX, Bootstrap, JavaScript, HTML, CSS
+- **Tooling:** Go Modules (`go.mod` / `go.sum`)
 ---
 
 ## Getting Started
