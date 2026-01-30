@@ -138,20 +138,22 @@ func GetFunds(c *gin.Context) {
 		c.HTML(200, "depositFunds", middlewares.WithAuth(c, gin.H{
 			"errors": map[string]string{},
 			"amount": 0,
-			"succ": "",
+			"succ":   "",
 		}))
 		return
 	}
 	c.HTML(200, "index.html", middlewares.WithAuth(c, gin.H{
-		"InitialPath": "/funds",
+		"InitialPath":    "/",
+		"OpenFundsModal": true,
 	}))
+
 }
 
 func PostFunds(c *gin.Context) {
 	errs := map[string]string{}
 	amountStr := strings.TrimSpace(c.PostForm("amount"))
 	amount, err := strconv.ParseFloat(amountStr, 64)
-	if err!=nil{
+	if err != nil {
 		errs["_form"] = "There was an error with the amount!"
 	}
 	uVal, ok := c.Get("user")

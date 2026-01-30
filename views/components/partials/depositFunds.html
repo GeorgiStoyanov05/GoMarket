@@ -1,62 +1,52 @@
 {{ define "depositFunds" }}
-<div
-  <div
-    class="modal fade"
-    id="staticBackdrop"
-    data-bs-backdrop="static"
-    data-bs-keyboard="false"
-    tabindex="-1"
-    aria-labelledby="staticBackdropLabel"
-    aria-hidden="true"
+<div class="modal-content">
+  <form
+    method="POST"
+    hx-post="/funds"
+    hx-target="#fundsModalContent"
+    hx-swap="innerHTML"
+    novalidate
   >
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <form
-          method="POST"
-          hx-post="/funds"
-          hx-target="#fundsModalContent"
-          hx-swap="innerHTML"
-          novalidate
-        >
-          <div class="modal-header">
-            <h5 class="modal-title" id="staticBackdropLabel">Deposit Funds</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="mb-3">
-              <label for="amount" class="form-label">Amount in EUR</label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                class="form-control {{ with .errors }}{{ if index . "amount" }}is-invalid{{ end }}{{ end }}"
-                id="amount"
-                name="amount"
-                placeholder="0.00"
-                value="{{ .amount }}"
-              />
-              {{ with .errors }}
-                {{ with index . "amount" }}
-                  <div class="invalid-feedback">{{ . }}</div>
-                {{ end }}
-              {{ end }}
-            </div>
-            {{ with .errors }}
-              {{ with index . "_form" }}
-                <div class="alert alert-danger mb-3" role="alert">{{ . }}</div>
-              {{ end }}
-            {{ end }}
-
-            {{ if .succ }}
-              <div class="alert alert-success mb-3" role="alert">{{ .succ }}</div>
-            {{ end }}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Deposit</button>
-          </div>
-        </form>
-      </div>
+    <div class="modal-header">
+      <h5 class="modal-title" id="staticBackdropLabel">Deposit Funds</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-  </div>
+
+    <div class="modal-body">
+      <div class="mb-3">
+        <label for="amount" class="form-label">Amount in EUR</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          class="form-control {{ with .errors }}{{ if index . "amount" }}is-invalid{{ end }}{{ end }}"
+          id="amount"
+          name="amount"
+          placeholder="0.00"
+          value="{{ .amount }}"
+        />
+        {{ with .errors }}
+          {{ with index . "amount" }}
+            <div class="invalid-feedback">{{ . }}</div>
+          {{ end }}
+        {{ end }}
+      </div>
+
+      {{ with .errors }}
+        {{ with index . "_form" }}
+          <div class="alert alert-danger mb-3" role="alert">{{ . }}</div>
+        {{ end }}
+      {{ end }}
+
+      {{ if .succ }}
+        <div class="alert alert-success mb-3" role="alert">{{ .succ }}</div>
+      {{ end }}
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="submit" class="btn btn-primary">Deposit</button>
+    </div>
+  </form>
+</div>
 {{ end }}
