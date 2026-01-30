@@ -5,14 +5,22 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 	"github.com/GeorgiStoyanov05/GoMarket2/middlewares"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/GeorgiStoyanov05/GoMarket2/services"
 )
 
+type SearchResultItem struct {
+	Symbol        string
+	DisplaySymbol string
+	Description   string
+	Type          string
+}
+
 var upgrader = websocket.Upgrader{
-	// For dev. In prod, restrict origin.
 	CheckOrigin: func(r *http.Request) bool { return true },
 }
 
@@ -113,5 +121,31 @@ func GetSymbolDetailsPage(c *gin.Context) {
 	// Normal navigation (typed URL) -> return shell + InitialPath
 	c.HTML(http.StatusOK, "index.html", middlewares.WithAuth(c, gin.H{
 		"InitialPath": "/details/" + symbol,
+	}))
+}
+
+func GetSearchResults(c *gin.Context) {
+	q := strings.TrimSpace(c.Query("q"))
+
+	if q == "" {
+		c.HTML(http.StatusOK, "searchResults", middlewares.WithAuth(c, gin.H{
+			"Query":   "",
+			"Results": []services.FinnhubSearchItem{},
+		}))
+		return
+	}
+
+	results, err := services.SearchSymbols(q, 10)
+	if err != nil {
+		c.HTML(http.StatusOK, "searchResults", middlewares.WithAuth(c, gin.H{
+			"Query": q,
+			"Error": "Search unavailable right now.",
+		}))
+		return
+	}
+
+	c.HTML(http.StatusOK, "searchResults", middlewares.WithAuth(c, gin.H{
+		"Query":   q,
+		"Results": results,
 	}))
 }

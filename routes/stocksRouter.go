@@ -7,15 +7,6 @@ import (
 )
 
 func StocksRoutes(r *gin.Engine) {
-	r.GET("/watchlist", middlewares.AuthMiddleware(), func(c *gin.Context) {
-		if c.GetHeader("HX-Request") == "true" {
-			c.HTML(200, "watchlist", middlewares.WithAuth(c, gin.H{}))
-			return
-		}
-		c.HTML(200, "index.html", middlewares.WithAuth(c, gin.H{
-			"InitialPath": "/watchlist",
-		}))
-	})
 	r.GET("/search", middlewares.AuthMiddleware(), func(c *gin.Context) {
 		if c.GetHeader("HX-Request") == "true" {
 			c.HTML(200, "search", middlewares.WithAuth(c, gin.H{}))
@@ -25,8 +16,7 @@ func StocksRoutes(r *gin.Engine) {
 			"InitialPath": "/search",
 		}))
 	})
+	r.GET("/search/results", middlewares.AuthMiddleware(), controllers.GetSearchResults)
 	r.GET("/details/:symbol", middlewares.AuthMiddleware(), controllers.GetSymbolDetailsPage)
 	r.GET("/ws/trades", controllers.WSFinnhubTrades)
-
-
 }

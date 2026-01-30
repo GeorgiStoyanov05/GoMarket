@@ -1,0 +1,33 @@
+{{ define "searchResults" }} {{ if .Error }}
+<div class="text-danger">{{ .Error }}</div>
+
+{{ else if not .Query }}
+<div class="text-muted">Start typing to search…</div>
+
+{{ else if not .Results }}
+<div class="text-muted">No results for “{{ .Query }}”.</div>
+
+{{ else }}
+<div class="text-muted small mb-2">Results for “{{ .Query }}”</div>
+
+<div class="list-group">
+	{{ range .Results }}
+	<a
+		class="list-group-item list-group-item-action"
+		href="/details/{{ .Symbol }}"
+		hx-get="/details/{{ .Symbol }}"
+		hx-target="#app"
+		hx-swap="innerHTML"
+		hx-push-url="true"
+	>
+		<div class="d-flex justify-content-between">
+			<div>
+				<div class="fw-semibold">{{ .DisplaySymbol }}</div>
+				<div class="small text-muted">{{ .Description }}</div>
+			</div>
+			<span class="badge text-bg-secondary">{{ .Type }}</span>
+		</div>
+	</a>
+	{{ end }}
+</div>
+{{ end }} {{ end }}

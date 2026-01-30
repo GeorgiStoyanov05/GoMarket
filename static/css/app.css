@@ -19,3 +19,16 @@
   background: #212529;
   border: 1px solid rgba(255,255,255,0.08);
 }
+
+/* Home dashboard widget sizing */
+.tv-widget-slot {
+  width: 100%;
+  min-height: 420px;
+  background: #1e222d; /* TV dark panel vibe */
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+@media (min-width: 1200px) {
+  .tv-widget-slot { min-height: 520px; }
+}

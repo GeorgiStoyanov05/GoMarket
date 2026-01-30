@@ -49,7 +49,7 @@ func main() {
 			"InitialPath": "/",
 		})
 	})
-	database.DBInstance()
+	database.Init()
 	services.StartPriceAlertMonitor(context.Background())
 	services.EnsureTradingIndexes()
 	router.Run(":" + port)
