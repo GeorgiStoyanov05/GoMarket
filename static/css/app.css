@@ -1,0 +1,21 @@
+/* Prevent flex squeezing issues in your HTMX-injected area */
+#app { min-width: 0; }
+
+/* Details root should fill available space */
+.symbol-details {
+  min-width: 0;
+  width: 60%;
+}
+
+/* Chart sizing = compact */
+#chart {
+  width: 100%;
+  height: 600px;
+  min-width: 0;
+}
+
+/* Optional: make cards match your dark UI a bit nicer */
+.details-card {
+  background: #212529;
+  border: 1px solid rgba(255,255,255,0.08);
+}

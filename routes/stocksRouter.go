@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/GeorgiStoyanov05/GoMarket2/middlewares"
+	"github.com/GeorgiStoyanov05/GoMarket2/controllers"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,4 +34,8 @@ func StocksRoutes(r *gin.Engine) {
 			"InitialPath": "/search",
 		}))
 	})
+	r.GET("/details/:symbol", middlewares.AuthMiddleware(), controllers.GetSymbolDetailsPage)
+	r.GET("/ws/trades", controllers.WSFinnhubTrades)
+
+
 }
