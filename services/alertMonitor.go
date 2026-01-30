@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/GeorgiStoyanov05/GoMarket2/models"
+	"github.com/GeorgiStoyanov05/GoMarket/models"
 )
 
 func StartPriceAlertMonitor(ctx context.Context) {

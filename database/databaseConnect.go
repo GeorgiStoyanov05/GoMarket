@@ -9,7 +9,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/GeorgiStoyanov05/GoMarket2/models"
+	"github.com/GeorgiStoyanov05/GoMarket/models"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

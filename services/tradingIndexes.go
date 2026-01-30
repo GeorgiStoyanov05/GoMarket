@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	db "github.com/GeorgiStoyanov05/GoMarket2/database"
+	db "github.com/GeorgiStoyanov05/GoMarket/database"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

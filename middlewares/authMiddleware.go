@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 	"time"
-	db "github.com/GeorgiStoyanov05/GoMarket2/database"
+	db "github.com/GeorgiStoyanov05/GoMarket/database"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson/primitive"

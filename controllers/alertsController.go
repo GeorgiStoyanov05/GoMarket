@@ -5,9 +5,9 @@ import (
 	"net/http"
     "strings"
     "sort"
-    "github.com/GeorgiStoyanov05/GoMarket2/middlewares"
-	"github.com/GeorgiStoyanov05/GoMarket2/models"
-	"github.com/GeorgiStoyanov05/GoMarket2/services"
+    "github.com/GeorgiStoyanov05/GoMarket/middlewares"
+	"github.com/GeorgiStoyanov05/GoMarket/models"
+	"github.com/GeorgiStoyanov05/GoMarket/services"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/gin-gonic/gin"
 )

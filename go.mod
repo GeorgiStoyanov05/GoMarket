@@ -1,4 +1,4 @@
-module github.com/GeorgiStoyanov05/GoMarket2
+module github.com/GeorgiStoyanov05/GoMarket
 
 go 1.25.2
 

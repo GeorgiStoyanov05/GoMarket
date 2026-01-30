@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/GeorgiStoyanov05/GoMarket2/middlewares"
+	"github.com/GeorgiStoyanov05/GoMarket/middlewares"
 	"github.com/gin-gonic/gin"
 )
 

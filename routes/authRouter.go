@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"github.com/GeorgiStoyanov05/GoMarket2/controllers"
+	"github.com/GeorgiStoyanov05/GoMarket/controllers"
 	"github.com/gin-gonic/gin"
 )
 

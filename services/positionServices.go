@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	db "github.com/GeorgiStoyanov05/GoMarket2/database"
-	"github.com/GeorgiStoyanov05/GoMarket2/models"
+	db "github.com/GeorgiStoyanov05/GoMarket/database"
+	"github.com/GeorgiStoyanov05/GoMarket/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson/primitive"

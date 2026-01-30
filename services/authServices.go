@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	db "github.com/GeorgiStoyanov05/GoMarket2/database"
-	models "github.com/GeorgiStoyanov05/GoMarket2/models"
+	db "github.com/GeorgiStoyanov05/GoMarket/database"
+	models "github.com/GeorgiStoyanov05/GoMarket/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"go.mongodb.org/mongo-driver/bson"

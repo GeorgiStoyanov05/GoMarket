@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 	"time"
-	"github.com/GeorgiStoyanov05/GoMarket2/middlewares"
+	"github.com/GeorgiStoyanov05/GoMarket/middlewares"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/GeorgiStoyanov05/GoMarket2/services"
+	"github.com/GeorgiStoyanov05/GoMarket/services"
 )
 
 type SearchResultItem struct {
