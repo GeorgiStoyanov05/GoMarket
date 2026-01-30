@@ -1,0 +1,92 @@
+{{ define "portfolioPositions" }} {{ if not .Groups }}
+<div class="text-muted">
+	No positions yet. Buy a stock from its details page.
+</div>
+{{ else }}
+<div class="d-flex flex-column gap-3">
+	{{ range .Groups }}
+	<div class="card bg-dark border-secondary">
+		<div
+			class="card-header d-flex justify-content-between align-items-center"
+		>
+			<div class="fw-semibold">{{ .Symbol }}</div>
+
+			<a
+				class="btn btn-sm btn-outline-light"
+				href="/details/{{ .Symbol }}"
+				hx-get="/details/{{ .Symbol }}"
+				hx-target="#app"
+				hx-swap="innerHTML"
+				hx-push-url="true"
+			>
+				Open
+			</a>
+		</div>
+
+		<div class="card-body py-2">
+			<div class="d-flex flex-column gap-1">
+				<div>
+					<span class="text-muted">Qty:</span>
+					<span class="fw-semibold">{{ .Qty }}</span>
+				</div>
+				<div>
+					<span class="text-muted">Avg cost:</span>
+					<span class="fw-semibold"
+						>{{ printf "%.2f" .AvgCost }}</span
+					>
+				</div>
+				<div>
+					<span class="text-muted">Last price:</span>
+					<span class="fw-semibold"
+						>{{ printf "%.2f" .CurrentPrice }}</span
+					>
+				</div>
+
+				{{ if gt .PnL 0.0 }}
+				<div class="fw-semibold text-success">
+					P/L: +{{ printf "%.2f" .PnL }} ({{ printf "%.2f" .PnLPct
+					}}%)
+				</div>
+				{{ else if lt .PnL 0.0 }}
+				<div class="fw-semibold text-danger">
+					P/L: {{ printf "%.2f" .PnL }} ({{ printf "%.2f" .PnLPct }}%)
+				</div>
+				{{ else }}
+				<div class="fw-semibold text-muted">P/L: 0.00 (0.00%)</div>
+				{{ end }}
+			</div>
+
+			<hr class="border-secondary my-3" />
+
+			<div class="d-flex gap-2 align-items-end">
+				<div class="flex-grow-1">
+					<label class="form-label small text-muted mb-1"
+						>Sell quantity</label
+					>
+					<input
+						id="sellQty-{{ .Symbol }}"
+						name="qty"
+						class="form-control form-control-sm"
+						type="number"
+						step="1"
+						min="1"
+						max="{{ .Qty }}"
+					/>
+				</div>
+
+				<button
+					class="btn btn-danger btn-sm"
+					hx-post="/trade/{{ .Symbol }}/sell"
+					hx-include="#sellQty-{{ .Key }}"
+					hx-target="#portfolioMsg"
+					hx-swap="innerHTML"
+					hx-on::after-request="if (event.detail.successful) htmx.trigger(document.body,'positionUpdated')"
+				>
+					Sell
+				</button>
+			</div>
+		</div>
+	</div>
+	{{ end }}
+</div>
+{{ end }} {{ end }}

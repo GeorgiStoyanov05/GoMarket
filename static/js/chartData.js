@@ -117,6 +117,58 @@
 		let ticks = []; // {t: unixSec, p: price}
 		let bars = [];
 		let lastBar = null;
+		let lastTradePrice = null;
+		let posUpdateRAF = null;
+
+		function fmt2(x) {
+			return (Math.round(x * 100) / 100).toFixed(2);
+		}
+
+		function updatePositionUI(price) {
+			const pos = wrap.querySelector('[data-position-panel="1"]');
+			if (!pos) return;
+
+			const qty = Number(pos.dataset.qty || 0);
+			const avg = Number(pos.dataset.avg || 0);
+			if (!Number.isFinite(qty) || qty <= 0) return;
+			if (!Number.isFinite(avg) || avg <= 0) return;
+
+			const lastEl = pos.querySelector('[data-role="pos-last-price"]');
+			const pnlRow = pos.querySelector('[data-role="pos-pnl-row"]');
+			const pnlVal = pos.querySelector('[data-role="pos-pnl-val"]');
+			const pnlPct = pos.querySelector('[data-role="pos-pnl-pct"]');
+			if (!lastEl || !pnlRow || !pnlVal || !pnlPct) return;
+
+			lastEl.textContent = fmt2(price);
+
+			const pnl = (price - avg) * qty;
+			const pct = avg > 0 ? ((price - avg) / avg) * 100 : 0;
+
+			pnlVal.textContent = (pnl > 0 ? "+" : "") + fmt2(pnl);
+			pnlPct.textContent = (pct > 0 ? "+" : "") + fmt2(pct);
+
+			pnlRow.classList.remove(
+				"text-success",
+				"text-danger",
+				"text-muted",
+			);
+			pnlRow.classList.add(
+				pnl > 0
+					? "text-success"
+					: pnl < 0
+						? "text-danger"
+						: "text-muted",
+			);
+		}
+
+		function schedulePosUpdate() {
+			if (posUpdateRAF) return;
+			posUpdateRAF = requestAnimationFrame(() => {
+				posUpdateRAF = null;
+				if (lastTradePrice == null) return;
+				updatePositionUI(lastTradePrice);
+			});
+		}
 
 		function resSec() {
 			return RES_TO_SEC[resEl.value] || 300;
@@ -161,6 +213,7 @@
 
 				for (const tr of msg.data) {
 					const price = Number(tr.p);
+					lastTradePrice = price;
 					const tSec = Math.floor(Number(tr.t) / 1000);
 					if (!Number.isFinite(price) || !Number.isFinite(tSec))
 						continue;
@@ -187,6 +240,7 @@
 						series.update(lastBar);
 					}
 				}
+				if (lastTradePrice != null) schedulePosUpdate();
 			};
 
 			ws.onclose = () => {
@@ -211,6 +265,8 @@
 			} catch {}
 			ro.disconnect();
 			chart.remove();
+			if (posUpdateRAF) cancelAnimationFrame(posUpdateRAF);
+			posUpdateRAF = null;
 		};
 
 		connect();

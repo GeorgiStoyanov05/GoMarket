@@ -7,6 +7,15 @@ import (
 )
 
 func AlertsRoutes(r *gin.Engine) {
+	r.GET("/alerts", middlewares.AuthMiddleware(), func(c *gin.Context) {
+		if c.GetHeader("HX-Request") == "true" {
+			c.HTML(200, "watchlist", middlewares.WithAuth(c, gin.H{}))
+			return
+		}
+		c.HTML(200, "index.html", middlewares.WithAuth(c, gin.H{
+			"InitialPath": "/watchlist",
+		}))
+	})
 	r.POST("/alerts/:symbol", middlewares.AuthMiddleware(), controllers.PostCreateAlert)
 	r.GET("/alerts/:symbol/list", middlewares.AuthMiddleware(), controllers.GetAlertsList)
 	r.POST("/alerts/:symbol/:id/delete", middlewares.AuthMiddleware(), controllers.PostDeleteAlert)

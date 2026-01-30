@@ -50,9 +50,6 @@ func RegisterUser(user *models.RegisterModel) (models.User, map[string]string) {
 		Role:         role,
 		Balance:      0,
 
-		Watchlist: []models.PriceAlert{},
-		Portfolio: []models.BoughtStock{},
-
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 	}

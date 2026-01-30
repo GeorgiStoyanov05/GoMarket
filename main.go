@@ -39,6 +39,7 @@ func main() {
 	routes.HomeRoutes(router)
 	routes.StocksRoutes(router)
 	routes.AlertsRoutes(router)
+	routes.TradingRoutes(router)
 	router.NoRoute(func(c *gin.Context) {
 		if c.GetHeader("HX-Request") == "true" {
 			c.HTML(200, "404.html", gin.H{})
@@ -50,5 +51,6 @@ func main() {
 	})
 	database.DBInstance()
 	services.StartPriceAlertMonitor(context.Background())
+	services.EnsureTradingIndexes()
 	router.Run(":" + port)
 }

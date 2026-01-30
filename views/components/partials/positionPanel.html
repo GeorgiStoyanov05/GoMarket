@@ -1,0 +1,26 @@
+{{ define "positionPanel" }}
+  {{ if not .HasPosition }}
+    <div class="text-muted small">You don’t own {{ .Symbol }} yet.</div>
+  {{ else }}
+    <div data-position-panel="1"
+         data-symbol="{{ .Symbol }}"
+         data-qty="{{ .Position.Qty }}"
+         data-avg="{{ printf "%.6f" .Position.AvgCost }}">
+
+      <div><span class="text-muted">Qty:</span> <span class="fw-semibold">{{ .Position.Qty }}</span></div>
+      <div><span class="text-muted">Avg cost:</span> <span class="fw-semibold">{{ printf "%.2f" .Position.AvgCost }}</span></div>
+      <div><span class="text-muted">Last price:</span>
+        <span class="fw-semibold" data-role="pos-last-price">{{ printf "%.2f" .CurrentPrice }}</span>
+      </div>
+
+      <div class="fw-semibold
+           {{ if gt .PnL 0.0 }}text-success{{ else if lt .PnL 0.0 }}text-danger{{ else }}text-muted{{ end }}"
+           data-role="pos-pnl-row">
+        P/L:
+        <span data-role="pos-pnl-val">{{ if gt .PnL 0.0 }}+{{ end }}{{ printf "%.2f" .PnL }}</span>
+        (
+        <span data-role="pos-pnl-pct">{{ if gt .PnLPct 0.0 }}+{{ end }}{{ printf "%.2f" .PnLPct }}</span>%)
+      </div>
+    </div>
+  {{ end }}
+{{ end }}
