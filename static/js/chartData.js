@@ -3,198 +3,228 @@
 // Works with SSR + HTMX (safe init/cleanup), dark theme, sane candle sizing
 
 (function () {
-  const RES_TO_SEC = { "1": 60, "5": 300, "15": 900, "60": 3600 };
+	const RES_TO_SEC = { 1: 60, 5: 300, 15: 900, 60: 3600 };
 
-  function wsUrl(path) {
-    const proto = location.protocol === "https:" ? "wss" : "ws";
-    return `${proto}://${location.host}${path}`;
-  }
+	function wsUrl(path) {
+		const proto = location.protocol === "https:" ? "wss" : "ws";
+		return `${proto}://${location.host}${path}`;
+	}
 
-  function bucketTimeSec(tSec, resSec) {
-    return Math.floor(tSec / resSec) * resSec;
-  }
+	function bucketTimeSec(tSec, resSec) {
+		return Math.floor(tSec / resSec) * resSec;
+	}
 
-  function buildBarsFromTicks(ticks, resSec) {
-    const bars = [];
-    let cur = null;
+	function buildBarsFromTicks(ticks, resSec) {
+		const bars = [];
+		let cur = null;
 
-    for (const tick of ticks) {
-      const bt = bucketTimeSec(tick.t, resSec);
-      if (!cur || cur.time !== bt) {
-        cur = { time: bt, open: tick.p, high: tick.p, low: tick.p, close: tick.p };
-        bars.push(cur);
-      } else {
-        cur.high = Math.max(cur.high, tick.p);
-        cur.low = Math.min(cur.low, tick.p);
-        cur.close = tick.p;
-      }
-    }
-    return bars;
-  }
+		for (const tick of ticks) {
+			const bt = bucketTimeSec(tick.t, resSec);
+			if (!cur || cur.time !== bt) {
+				cur = {
+					time: bt,
+					open: tick.p,
+					high: tick.p,
+					low: tick.p,
+					close: tick.p,
+				};
+				bars.push(cur);
+			} else {
+				cur.high = Math.max(cur.high, tick.p);
+				cur.low = Math.min(cur.low, tick.p);
+				cur.close = tick.p;
+			}
+		}
+		return bars;
+	}
 
-  function init(root) {
-    const wrap =
-      root?.querySelector?.('[data-symbol-details="1"]') ||
-      (root?.matches?.('[data-symbol-details="1"]') ? root : null);
+	function init(root) {
+		const wrap =
+			root?.querySelector?.('[data-symbol-details="1"]') ||
+			(root?.matches?.('[data-symbol-details="1"]') ? root : null);
 
-    if (!wrap || wrap.dataset.chartInit === "1") return;
-    wrap.dataset.chartInit = "1";
+		if (!wrap || wrap.dataset.chartInit === "1") return;
+		wrap.dataset.chartInit = "1";
 
-    const symbol = wrap.dataset.symbol;
-    const chartEl = wrap.querySelector("#chart");
-    const resEl = wrap.querySelector("#res");
+		const symbol = wrap.dataset.symbol;
+		const chartEl = wrap.querySelector("#chart");
+		const resEl = wrap.querySelector("#res");
 
-    if (!symbol || !chartEl || !resEl) return;
-    if (!window.LightweightCharts) {
-      console.error("LightweightCharts not loaded");
-      return;
-    }
+		if (!symbol || !chartEl || !resEl) return;
+		if (!window.LightweightCharts) {
+			console.error("LightweightCharts not loaded");
+			return;
+		}
 
-    // --- Chart ---
-    const chart = LightweightCharts.createChart(chartEl, {
-      width: chartEl.clientWidth,
-      height: chartEl.clientHeight || 420,
-      layout: {
-        background: { type: "solid", color: "#212529" },
-        textColor: "#e5e7eb",
-      },
-      grid: {
-        vertLines: { color: "rgba(255,255,255,0.06)" },
-        horzLines: { color: "rgba(255,255,255,0.06)" },
-      },
-      rightPriceScale: { borderColor: "rgba(255,255,255,0.12)" },
-      timeScale: {
-        borderColor: "rgba(255,255,255,0.12)",
-        timeVisible: true,
-        secondsVisible: false,
-        rightOffset: 12,
-        barSpacing: 6,      // smaller => more candles visible
-        minBarSpacing: 3,   // prevents huge candles when only a few exist
-        fixLeftEdge: true,
-        fixRightEdge: true,
-        lockVisibleTimeRangeOnResize: true,
-      },
-      crosshair: { mode: 1 },
-    });
+		// --- Chart ---
+		const chart = LightweightCharts.createChart(chartEl, {
+			width: chartEl.clientWidth,
+			height: chartEl.clientHeight || 420,
+			layout: {
+				background: { type: "solid", color: "#212529" },
+				textColor: "#e5e7eb",
+			},
+			grid: {
+				vertLines: { color: "rgba(255,255,255,0.06)" },
+				horzLines: { color: "rgba(255,255,255,0.06)" },
+			},
+			rightPriceScale: { borderColor: "rgba(255,255,255,0.12)" },
+			timeScale: {
+				borderColor: "rgba(255,255,255,0.12)",
+				timeVisible: true,
+				secondsVisible: false,
+				rightOffset: 12,
+				barSpacing: 6, // smaller => more candles visible
+				minBarSpacing: 3, // prevents huge candles when only a few exist
+				fixLeftEdge: true,
+				fixRightEdge: true,
+				lockVisibleTimeRangeOnResize: true,
+			},
+			crosshair: { mode: 1 },
+			localization: {
+				timeFormatter: (time) => {
+					const d = new Date(time * 1000);
+					return d.toLocaleString([], {
+						month: "2-digit",
+						day: "2-digit",
+						hour: "2-digit",
+						minute: "2-digit",
+					});
+				},
+			},
+		});
 
-    const series = chart.addCandlestickSeries({
-      upColor: "#22c55e",
-      downColor: "#ef4444",
-      wickUpColor: "#22c55e",
-      wickDownColor: "#ef4444",
-      borderVisible: false,
-    });
+		const series = chart.addCandlestickSeries({
+			upColor: "#22c55e",
+			downColor: "#ef4444",
+			wickUpColor: "#22c55e",
+			wickDownColor: "#ef4444",
+			borderVisible: false,
+		});
 
-    // --- Resize handling ---
-    const ro = new ResizeObserver(() => {
-      requestAnimationFrame(() => {
-        chart.applyOptions({
-          width: chartEl.clientWidth,
-          height: chartEl.clientHeight || 420,
-        });
-      });
-    });
-    ro.observe(chartEl);
+		// --- Resize handling ---
+		const ro = new ResizeObserver(() => {
+			requestAnimationFrame(() => {
+				chart.applyOptions({
+					width: chartEl.clientWidth,
+					height: chartEl.clientHeight || 420,
+				});
+			});
+		});
+		ro.observe(chartEl);
 
-    // --- State ---
-    let ticks = [];     // {t: unixSec, p: price}
-    let bars = [];
-    let lastBar = null;
+		// --- State ---
+		let ticks = []; // {t: unixSec, p: price}
+		let bars = [];
+		let lastBar = null;
 
-    function resSec() {
-      return RES_TO_SEC[resEl.value] || 300;
-    }
+		function resSec() {
+			return RES_TO_SEC[resEl.value] || 300;
+		}
 
-    function trimTicks() {
-      // Keep last 6 hours so interval switching can rebuild
-      const cutoff = Math.floor(Date.now() / 1000) - 6 * 3600;
-      while (ticks.length && ticks[0].t < cutoff) ticks.shift();
-    }
+		function trimTicks() {
+			// Keep last 6 hours so interval switching can rebuild
+			const cutoff = Math.floor(Date.now() / 1000) - 6 * 3600;
+			while (ticks.length && ticks[0].t < cutoff) ticks.shift();
+		}
 
-    function rebuild() {
-      bars = buildBarsFromTicks(ticks, resSec());
-      series.setData(bars);
-      lastBar = bars[bars.length - 1] || null;
-      // IMPORTANT: do NOT fitContent repeatedly (makes candles look huge)
-    }
+		function rebuild() {
+			bars = buildBarsFromTicks(ticks, resSec());
+			series.setData(bars);
+			lastBar = bars[bars.length - 1] || null;
+			// IMPORTANT: do NOT fitContent repeatedly (makes candles look huge)
+		}
 
-    // --- WS connect + reconnect ---
-    let ws = null;
-    let reconnectTimer = null;
+		// --- WS connect + reconnect ---
+		let ws = null;
+		let reconnectTimer = null;
 
-    function connect() {
-      if (reconnectTimer) clearTimeout(reconnectTimer);
+		function connect() {
+			if (reconnectTimer) clearTimeout(reconnectTimer);
 
-      ws = new WebSocket(wsUrl(`/ws/trades?symbol=${encodeURIComponent(symbol)}`));
+			ws = new WebSocket(
+				wsUrl(`/ws/trades?symbol=${encodeURIComponent(symbol)}`),
+			);
 
-      ws.onmessage = (ev) => {
-        // Finnhub trades:
-        // {"type":"trade","data":[{"p":258.28,"t":1769720400000,"s":"AAPL","v":...}, ...]}
-        let msg;
-        try {
-          msg = JSON.parse(ev.data);
-        } catch {
-          return;
-        }
-        if (msg.type !== "trade" || !Array.isArray(msg.data)) return;
+			ws.onmessage = (ev) => {
+				// Finnhub trades:
+				// {"type":"trade","data":[{"p":258.28,"t":1769720400000,"s":"AAPL","v":...}, ...]}
+				let msg;
+				try {
+					msg = JSON.parse(ev.data);
+				} catch {
+					return;
+				}
+				if (msg.type !== "trade" || !Array.isArray(msg.data)) return;
 
-        const intervalSec = resSec();
+				const intervalSec = resSec();
 
-        for (const tr of msg.data) {
-          const price = Number(tr.p);
-          const tSec = Math.floor(Number(tr.t) / 1000);
-          if (!Number.isFinite(price) || !Number.isFinite(tSec)) continue;
+				for (const tr of msg.data) {
+					const price = Number(tr.p);
+					const tSec = Math.floor(Number(tr.t) / 1000);
+					if (!Number.isFinite(price) || !Number.isFinite(tSec))
+						continue;
 
-          ticks.push({ t: tSec, p: price });
-          trimTicks();
+					ticks.push({ t: tSec, p: price });
+					trimTicks();
 
-          const bt = bucketTimeSec(tSec, intervalSec);
+					const bt = bucketTimeSec(tSec, intervalSec);
 
-          if (!lastBar || lastBar.time !== bt) {
-            lastBar = { time: bt, open: price, high: price, low: price, close: price };
-            bars.push(lastBar);
-            series.update(lastBar);
-          } else {
-            lastBar.high = Math.max(lastBar.high, price);
-            lastBar.low = Math.min(lastBar.low, price);
-            lastBar.close = price;
-            series.update(lastBar);
-          }
-        }
-      };
+					if (!lastBar || lastBar.time !== bt) {
+						lastBar = {
+							time: bt,
+							open: price,
+							high: price,
+							low: price,
+							close: price,
+						};
+						bars.push(lastBar);
+						series.update(lastBar);
+					} else {
+						lastBar.high = Math.max(lastBar.high, price);
+						lastBar.low = Math.min(lastBar.low, price);
+						lastBar.close = price;
+						series.update(lastBar);
+					}
+				}
+			};
 
-      ws.onclose = () => {
-        reconnectTimer = setTimeout(connect, 2000);
-      };
+			ws.onclose = () => {
+				reconnectTimer = setTimeout(connect, 2000);
+			};
 
-      ws.onerror = () => {
-        try { ws.close(); } catch {}
-      };
-    }
+			ws.onerror = () => {
+				try {
+					ws.close();
+				} catch {}
+			};
+		}
 
-    // Interval change => rebuild from collected ticks
-    resEl.addEventListener("change", rebuild);
+		// Interval change => rebuild from collected ticks
+		resEl.addEventListener("change", rebuild);
 
-    // Cleanup for HTMX swaps / navigation
-    wrap._destroy = () => {
-      if (reconnectTimer) clearTimeout(reconnectTimer);
-      try { ws && ws.close(); } catch {}
-      ro.disconnect();
-      chart.remove();
-    };
+		// Cleanup for HTMX swaps / navigation
+		wrap._destroy = () => {
+			if (reconnectTimer) clearTimeout(reconnectTimer);
+			try {
+				ws && ws.close();
+			} catch {}
+			ro.disconnect();
+			chart.remove();
+		};
 
-    connect();
-  }
+		connect();
+	}
 
-  // Full page load
-  document.addEventListener("DOMContentLoaded", () => init(document));
+	// Full page load
+	document.addEventListener("DOMContentLoaded", () => init(document));
 
-  // HTMX partial loads
-  document.addEventListener("htmx:load", (e) => init(e.target));
+	// HTMX partial loads
+	document.addEventListener("htmx:load", (e) => init(e.target));
 
-  // Cleanup when HTMX swaps old content out
-  document.body.addEventListener("htmx:beforeCleanupElement", (e) => {
-    const el = e.target;
-    if (el?.dataset?.chartInit === "1" && el._destroy) el._destroy();
-  });
+	// Cleanup when HTMX swaps old content out
+	document.body.addEventListener("htmx:beforeCleanupElement", (e) => {
+		const el = e.target;
+		if (el?.dataset?.chartInit === "1" && el._destroy) el._destroy();
+	});
 })();
